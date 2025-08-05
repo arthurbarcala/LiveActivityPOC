@@ -5,6 +5,7 @@ import SwiftUI
 struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var emoji: String
+        var progress: Double
     }
 
     var name: String
@@ -15,14 +16,13 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
         ActivityConfiguration(for: LiveActivityPOCWidgetAttributes.self) { context in
             VStack {
                 Text("Hello \(context.state.emoji)")
+                ProgressView(value: context.state.progress, total: 100.0)
             }
             .activityBackgroundTint(Color.cyan)
             .activitySystemActionForegroundColor(Color.black)
 
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
                     Text("Leading")
                 }
@@ -53,18 +53,23 @@ extension LiveActivityPOCWidgetAttributes {
 }
 
 extension LiveActivityPOCWidgetAttributes.ContentState {
-    fileprivate static var smiley: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(emoji: "😀")
+    static var started: LiveActivityPOCWidgetAttributes.ContentState {
+        LiveActivityPOCWidgetAttributes.ContentState(emoji: "🔴", progress: 0)
      }
+    
+    static var middle: LiveActivityPOCWidgetAttributes.ContentState {
+        LiveActivityPOCWidgetAttributes.ContentState(emoji: "💤", progress: 50)
+    }
      
-     fileprivate static var starEyes: LiveActivityPOCWidgetAttributes.ContentState {
-         LiveActivityPOCWidgetAttributes.ContentState(emoji: "🤩")
+    static var finished: LiveActivityPOCWidgetAttributes.ContentState {
+         LiveActivityPOCWidgetAttributes.ContentState(emoji: "✅", progress: 100)
      }
 }
 
 #Preview("Notification", as: .content, using: LiveActivityPOCWidgetAttributes.preview) {
    LiveActivityPOCWidgetLiveActivity()
 } contentStates: {
-    LiveActivityPOCWidgetAttributes.ContentState.smiley
-    LiveActivityPOCWidgetAttributes.ContentState.starEyes
+    LiveActivityPOCWidgetAttributes.ContentState.started
+    LiveActivityPOCWidgetAttributes.ContentState.middle
+    LiveActivityPOCWidgetAttributes.ContentState.finished
 }

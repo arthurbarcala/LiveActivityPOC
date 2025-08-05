@@ -13,7 +13,7 @@ class ViewController: UIViewController {
 
     func startLiveActivity() {
         let attributes = LiveActivityPOCWidgetAttributes(name: "Widget")
-        let initialState = LiveActivityPOCWidgetAttributes.ContentState(emoji: "🔴")
+        let initialState = LiveActivityPOCWidgetAttributes.ContentState.started
 
         do {
             let activity = try Activity<LiveActivityPOCWidgetAttributes>.request(
@@ -25,7 +25,10 @@ class ViewController: UIViewController {
 
             Task {
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
-                await updateLiveActivity(activity: activity)
+                await updateLiveActivity(state: .middle, activity: activity)
+                
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                await updateLiveActivity(state: .finished, activity: activity)
             }
 
         } catch {
@@ -33,10 +36,8 @@ class ViewController: UIViewController {
         }
     }
     
-    func updateLiveActivity(activity: Activity<LiveActivityPOCWidgetAttributes>) async {
-        let updatedState = LiveActivityPOCWidgetAttributes.ContentState(emoji: "✅")
-
-        await activity.update(using: updatedState)
+    func updateLiveActivity(state: LiveActivityPOCWidgetAttributes.ContentState, activity: Activity<LiveActivityPOCWidgetAttributes>) async {
+        await activity.update(using: state)
     }
 
 }
