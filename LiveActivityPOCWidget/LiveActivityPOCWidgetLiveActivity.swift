@@ -6,6 +6,7 @@ struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var emoji: String
         var progress: Double
+        var advice: String?
     }
 
     var name: String
@@ -15,7 +16,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: LiveActivityPOCWidgetAttributes.self) { context in
             VStack {
-                Text("Hello \(context.state.emoji)")
+                Text("\(context.state.advice ?? "No advice") \(context.state.emoji)")
                 ProgressView(value: context.state.progress, total: 100.0)
                     .progressViewStyle(.linear)
                     .padding(20)
@@ -32,7 +33,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
             
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Hello \(context.state.emoji)")
+                    Text("\(context.state.advice ?? "No advice") \(context.state.emoji)")
                     ProgressView(value: context.state.progress, total: 100.0)
                         .progressViewStyle(.linear)
                         .padding(20)
