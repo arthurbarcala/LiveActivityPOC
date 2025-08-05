@@ -2,6 +2,8 @@ import UIKit
 import ActivityKit
 
 class ViewController: UIViewController {
+    
+    var activity: Activity<LiveActivityPOCWidgetAttributes>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -9,6 +11,15 @@ class ViewController: UIViewController {
         if #available(iOS 16.1, *) {
             startLiveActivity()
         }
+
+        let button = UIButton(type: .system)
+        button.setTitle("Start Live Activity", for: .normal)
+        button.addTarget(self, action: #selector(restartLiveActivity), for: .touchUpInside)
+        button.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
+        button.center = view.center
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        view.addSubview(button)
     }
 
     func startLiveActivity() {
@@ -16,11 +27,17 @@ class ViewController: UIViewController {
         let initialState = LiveActivityPOCWidgetAttributes.ContentState.started
 
         do {
-            let activity = try Activity<LiveActivityPOCWidgetAttributes>.request(
+            activity = try Activity<LiveActivityPOCWidgetAttributes>.request(
                 attributes: attributes,
                 contentState: initialState,
                 pushType: nil
             )
+            
+            guard let activity = activity else {
+                print("Erro ao iniciar Live Activity: activity é nil")
+                return
+            }
+            
             print("Live Activity iniciada: \(activity.id)")
 
             Task {
@@ -38,6 +55,19 @@ class ViewController: UIViewController {
     
     func updateLiveActivity(state: LiveActivityPOCWidgetAttributes.ContentState, activity: Activity<LiveActivityPOCWidgetAttributes>) async {
         await activity.update(using: state)
+    }
+    
+    @objc func restartLiveActivity() {
+        guard let activity = activity else { return }
+        Task {
+            await activity.update(using: .started)
+            
+            try? await Task.sleep(nanoseconds: 10_000_000_000)
+            await updateLiveActivity(state: .middle, activity: activity)
+            
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            await updateLiveActivity(state: .finished, activity: activity)
+        }
     }
 
 }

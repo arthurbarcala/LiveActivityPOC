@@ -17,6 +17,8 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
             VStack {
                 Text("Hello \(context.state.emoji)")
                 ProgressView(value: context.state.progress, total: 100.0)
+                    .progressViewStyle(.linear)
+                    .padding(20)
             }
             .activityBackgroundTint(Color.cyan)
             .activitySystemActionForegroundColor(Color.black)
@@ -24,19 +26,23 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+            
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    Text("Hello \(context.state.emoji)")
+                    ProgressView(value: context.state.progress, total: 100.0)
+                        .progressViewStyle(.linear)
+                        .padding(20)
                 }
             } compactLeading: {
-                Text("L")
+                ProgressView(value: context.state.progress, total: 100.0)
+                    .progressViewStyle(.circular)
+                    .frame(width: 30)
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text("\(context.state.emoji)")
             } minimal: {
                 Text(context.state.emoji)
             }
