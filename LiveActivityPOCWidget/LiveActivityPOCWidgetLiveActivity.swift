@@ -4,9 +4,10 @@ import SwiftUI
 
 struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var emoji: String
+        var picpayLogo: String = "PicPay"
+        var text: String = "Proteja seu celular e garanta 20% de cashback"
         var progress: Double
-        var advice: String?
+        var labels: [String] = ["Seguro contratado", "Apólice emitida", "Cashback liberado"]
     }
 
     var name: String
@@ -16,36 +17,109 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: LiveActivityPOCWidgetAttributes.self) { context in
             VStack {
-                Text("\(context.state.advice ?? "No advice") \(context.state.emoji)")
-                ProgressView(value: context.state.progress, total: 100.0)
-                    .progressViewStyle(.linear)
-                    .padding(20)
+                HStack {
+                    Text(context.state.picpayLogo)
+                        .bold()
+                        .padding(20)
+                    Spacer()
+                }
+                Text(context.state.text)
+                    
+                ZStack(alignment: .leading) {
+                        ProgressView(value: context.state.progress, total: 100)
+                            .progressViewStyle(LinearProgressViewStyle(tint: Color.green))
+                            .frame(height: 8)
+                            .padding(.horizontal, 60)
+                        HStack {
+                            Circle()
+                                .fill(Color.green)
+                                .frame(width: 12, height: 12)
+                            Spacer()
+                            Circle()
+                                .fill(Color.green)
+                                .frame(width: 12, height: 12)
+                            Spacer()
+                            Circle()
+                                .fill(Color.green)
+                                .frame(width: 12, height: 12)
+                        }
+                        .padding(.horizontal, 60)
+                    }
+                    .padding(.vertical, 8)
+                HStack {
+                    Text(context.state.labels[0])
+                        .font(.caption)
+                        .padding(5)
+                    Text(context.state.labels[1])
+                        .font(.caption)
+                        .padding(5)
+                    Text(context.state.labels[2])
+                        .font(.caption)
+                        .padding(5)
+                }
+                Spacer()
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .activityBackgroundTint(Color.white)
+            .activitySystemActionForegroundColor(Color.gray)
 
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    
+                    HStack {
+                        Text(context.state.picpayLogo)
+                            .bold()
+                            .padding(20)
+                    }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-            
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("\(context.state.advice ?? "No advice") \(context.state.emoji)")
-                    ProgressView(value: context.state.progress, total: 100.0)
-                        .progressViewStyle(.linear)
-                        .padding(20)
+                    VStack {
+                        ZStack(alignment: .leading) {
+                            ProgressView(value: context.state.progress, total: 100)
+                                .progressViewStyle(LinearProgressViewStyle(tint: Color.green))
+                                .frame(height: 8)
+                                .padding(.horizontal, 60)
+                            HStack {
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 12, height: 12)
+                                Spacer()
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 12, height: 12)
+                                Spacer()
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 12, height: 12)
+                            }
+                            .padding(.horizontal, 60)
+                        }
+                        .padding(.vertical, 8)
+                        HStack {
+                            Text(context.state.labels[0])
+                                .font(.caption)
+                                .padding(5)
+                            Text(context.state.labels[1])
+                                .font(.caption)
+                                .padding(5)
+                            Text(context.state.labels[2])
+                                .font(.caption)
+                                .padding(5)
+                        }
+                        Spacer()
+                    }
                 }
             } compactLeading: {
-                ProgressView(value: context.state.progress, total: 100.0)
-                    .progressViewStyle(.circular)
-                    .frame(width: 30)
+                    Text("P")
+                    .bold()
+                    .padding(10)
+                    .background(Color.green)
+                    .cornerRadius(24)
             } compactTrailing: {
-                Text("\(context.state.emoji)")
+                ProgressView(value: context.state.progress, total: 100)
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.green))
             } minimal: {
-                Text(context.state.emoji)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
@@ -60,23 +134,25 @@ extension LiveActivityPOCWidgetAttributes {
 }
 
 extension LiveActivityPOCWidgetAttributes.ContentState {
-    static var started: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(emoji: "🔴", progress: 0)
+    static var seguroContratado: LiveActivityPOCWidgetAttributes.ContentState {
+        LiveActivityPOCWidgetAttributes.ContentState(progress: 0)
      }
     
-    static var middle: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(emoji: "💤", progress: 50)
+    static var apoliceEmitida: LiveActivityPOCWidgetAttributes.ContentState {
+        LiveActivityPOCWidgetAttributes.ContentState(progress: 50)
     }
      
-    static var finished: LiveActivityPOCWidgetAttributes.ContentState {
-         LiveActivityPOCWidgetAttributes.ContentState(emoji: "✅", progress: 100)
+    static var cashbackLiberado: LiveActivityPOCWidgetAttributes.ContentState {
+         LiveActivityPOCWidgetAttributes.ContentState(progress: 100)
      }
 }
 
 #Preview("Notification", as: .content, using: LiveActivityPOCWidgetAttributes.preview) {
    LiveActivityPOCWidgetLiveActivity()
 } contentStates: {
-    LiveActivityPOCWidgetAttributes.ContentState.started
-    LiveActivityPOCWidgetAttributes.ContentState.middle
-    LiveActivityPOCWidgetAttributes.ContentState.finished
+    LiveActivityPOCWidgetAttributes.ContentState.seguroContratado
+    LiveActivityPOCWidgetAttributes.ContentState.apoliceEmitida
+    LiveActivityPOCWidgetAttributes.ContentState.cashbackLiberado
 }
+
+

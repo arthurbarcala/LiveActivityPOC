@@ -81,6 +81,13 @@
 			);
 			target = E4124DE12E4129E8001727A6 /* LiveActivityPOC */;
 		};
+		E4E10DA32E45217800496D1C /* Exceptions for "LiveActivityPOC" folder in "LiveActivityPOCWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+			);
+			target = E4124E192E412A0A001727A6 /* LiveActivityPOCWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -88,6 +95,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				E4124E0A2E4129EB001727A6 /* Exceptions for "LiveActivityPOC" folder in "LiveActivityPOC" target */,
+				E4E10DA32E45217800496D1C /* Exceptions for "LiveActivityPOC" folder in "LiveActivityPOCWidgetExtension" target */,
 			);
 			path = LiveActivityPOC;
 			sourceTree = "<group>";
