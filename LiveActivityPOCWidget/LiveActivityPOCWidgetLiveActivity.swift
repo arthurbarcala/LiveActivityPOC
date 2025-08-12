@@ -5,13 +5,11 @@ import SwiftUI
 struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var picpayLogo: String = "PicPay"
-        var text: String = "Proteja seu celular e garanta 20% de cashback"
-        var progress: Double
-        var labels: [String] = ["Seguro contratado", "Apólice emitida", "Cashback liberado"]
+        var texts: [String]?
         var seconds: Double = 0
     }
 
-    var name: String
+    var name: String = "Widget"
 }
 
 struct LiveActivityPOCWidgetLiveActivity: Widget {
@@ -39,7 +37,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                     }
                     Spacer()
                     HStack {
-                        Text("Seu celular ainda está sem proteção")
+                        Text(context.state.texts?[0] ?? "")
                             .font(.system(size: 14))
                         Image(systemName: "shield")
                             .font(.system(size: 14))
@@ -49,7 +47,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(LinearGradient(colors: [Color(red: 0, green: 0.56, blue: 0.41), Color(red: 0.05, green: 1.61, blue: 1.19)], startPoint: .leading, endPoint: .trailing))
                             .frame(minHeight: 60)
-                        Text("Ganhe R$20 de cashback + cobertura contra roubo, furto e quebra. Apenas R$ 2,00 por dia")
+                        Text(context.state.texts?[1] ?? "")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
@@ -58,7 +56,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, 1)
-                    Text("Evite prejuízo de até R$7.000")
+                    Text(context.state.texts?[2] ?? "")
                         .font(.system(size: 16, weight: .bold))
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.bottom, 6)
@@ -97,7 +95,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(LinearGradient(colors: [Color(red: 0, green: 0.56, blue: 0.41), Color(red: 0.05, green: 1.61, blue: 1.19)], startPoint: .leading, endPoint: .trailing))
                                 .frame(minHeight: 60)
-                            Text("Ganhe R$20 de cashback + cobertura contra roubo, furto e quebra. Apenas R$ 2,00 por dia")
+                            Text(context.state.texts?[1] ?? "")
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
@@ -135,28 +133,3 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
     }
 }
 
-extension LiveActivityPOCWidgetAttributes {
-    fileprivate static var preview: LiveActivityPOCWidgetAttributes {
-        LiveActivityPOCWidgetAttributes(name: "World")
-    }
-}
-
-extension LiveActivityPOCWidgetAttributes.ContentState {
-    static var seguroContratado: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 0, seconds: 10)
-    }
-    static var apoliceEmitida: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 50, seconds: 4 * 3600)
-    }
-    static var cashbackLiberado: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 100, seconds: 4 * 3600)
-    }
-}
-
-#Preview("Notification", as: .content, using: LiveActivityPOCWidgetAttributes.preview) {
-    LiveActivityPOCWidgetLiveActivity()
-} contentStates: {
-    LiveActivityPOCWidgetAttributes.ContentState.seguroContratado
-    LiveActivityPOCWidgetAttributes.ContentState.apoliceEmitida
-    LiveActivityPOCWidgetAttributes.ContentState.cashbackLiberado
-}
