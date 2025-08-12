@@ -24,8 +24,9 @@ class ViewController: UIViewController {
 
     func startLiveActivity() {
         let attributes = LiveActivityPOCWidgetAttributes(name: "Widget")
+        var seconds = 14400
         let initialState = LiveActivityPOCWidgetAttributes.ContentState.seguroContratado
-
+        
         do {
             activity = try Activity<LiveActivityPOCWidgetAttributes>.request(
                 attributes: attributes,
@@ -40,12 +41,13 @@ class ViewController: UIViewController {
             
             print("Live Activity iniciada: \(activity.id)")
 
+            //Fiz dessa forma sem utilizar websockets, porém acredito que não seja muito viável
             Task {
-                try? await Task.sleep(nanoseconds: 10_000_000_000)
-                await updateLiveActivity(state: .apoliceEmitida, activity: activity)
-                
-                try? await Task.sleep(nanoseconds: 5_000_000_000)
-                await updateLiveActivity(state: .cashbackLiberado, activity: activity)
+                while (seconds > 0) {
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    await activity.update(using: LiveActivityPOCWidgetAttributes.ContentState(progress: 0, seconds: seconds))
+                    seconds -= 1
+                }
             }
 
         } catch {
