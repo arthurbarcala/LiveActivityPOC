@@ -8,7 +8,7 @@ struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
         var text: String = "Proteja seu celular e garanta 20% de cashback"
         var progress: Double
         var labels: [String] = ["Seguro contratado", "Apólice emitida", "Cashback liberado"]
-        var seconds: Int = 0
+        var seconds: Double = 0
     }
 
     var name: String
@@ -27,8 +27,14 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                         HStack {
                             Image(systemName: "clock")
                                 .font(.caption)
-                            Text(timeString(from: context.state.seconds))
-                                .font(.caption)
+                            Text(
+                                timerInterval: Date.now...Date(timeInterval: context.state.seconds, since: .now),
+                                pauseTime: Date.now,
+                                countsDown: true,
+                                showsHours: true
+                            )
+                            .font(.caption)
+                            .frame(width: 50)
                         }
                     }
                     Spacer()
@@ -73,8 +79,14 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                     HStack {
                         Image(systemName: "clock")
                             .font(.caption)
-                        Text(timeString(from: context.state.seconds))
-                            .font(.caption)
+                        Text(
+                            timerInterval: Date.now...Date(timeInterval: context.state.seconds, since: .now),
+                            pauseTime: Date.now,
+                            countsDown: true,
+                            showsHours: true
+                        )
+                        .font(.caption)
+                        .frame(width: 50)
                     }
                     .padding(12)
                 }
@@ -106,8 +118,14 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                 HStack {
                     Image(systemName: "clock")
                         .font(.caption)
-                    Text(timeString(from: context.state.seconds))
-                        .font(.caption)
+                    Text(
+                        timerInterval: Date.now...Date(timeInterval: context.state.seconds, since: .now),
+                        pauseTime: Date.now,
+                        countsDown: true,
+                        showsHours: true
+                    )
+                    .font(.caption)
+                    .frame(width: 50)
                 }
             } minimal: {
             }
@@ -125,13 +143,13 @@ extension LiveActivityPOCWidgetAttributes {
 
 extension LiveActivityPOCWidgetAttributes.ContentState {
     static var seguroContratado: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 0)
+        LiveActivityPOCWidgetAttributes.ContentState(progress: 0, seconds: 10)
     }
     static var apoliceEmitida: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 50)
+        LiveActivityPOCWidgetAttributes.ContentState(progress: 50, seconds: 4 * 3600)
     }
     static var cashbackLiberado: LiveActivityPOCWidgetAttributes.ContentState {
-        LiveActivityPOCWidgetAttributes.ContentState(progress: 100)
+        LiveActivityPOCWidgetAttributes.ContentState(progress: 100, seconds: 4 * 3600)
     }
 }
 
@@ -141,11 +159,4 @@ extension LiveActivityPOCWidgetAttributes.ContentState {
     LiveActivityPOCWidgetAttributes.ContentState.seguroContratado
     LiveActivityPOCWidgetAttributes.ContentState.apoliceEmitida
     LiveActivityPOCWidgetAttributes.ContentState.cashbackLiberado
-}
-
-func timeString(from seconds: Int) -> String {
-    let hours = seconds / 3600
-    let minutes = (seconds % 3600) / 60
-    let secs = seconds % 60
-    return String(format: "%02d:%02d:%02d", hours, minutes, secs)
 }

@@ -14,7 +14,7 @@ class ViewController: UIViewController {
 
         let button = UIButton(type: .system)
         button.setTitle("Start Live Activity", for: .normal)
-        button.addTarget(self, action: #selector(restartLiveActivity), for: .touchUpInside)
+        button.addTarget(self, action: #selector(startLiveActivity), for: .touchUpInside)
         button.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         button.center = view.center
         button.backgroundColor = .systemBlue
@@ -22,10 +22,10 @@ class ViewController: UIViewController {
         view.addSubview(button)
     }
 
-    func startLiveActivity() {
+    @objc func startLiveActivity() {
         let attributes = LiveActivityPOCWidgetAttributes(name: "Widget")
-        var seconds = 14400
         let initialState = LiveActivityPOCWidgetAttributes.ContentState.seguroContratado
+        let seconds = initialState.seconds
         
         do {
             activity = try Activity<LiveActivityPOCWidgetAttributes>.request(
@@ -40,14 +40,10 @@ class ViewController: UIViewController {
             }
             
             print("Live Activity iniciada: \(activity.id)")
-
-            //Fiz dessa forma sem utilizar websockets, porém acredito que não seja muito viável
+            
             Task {
-                while (seconds > 0) {
-                    try? await Task.sleep(nanoseconds: 1_000_000_000)
-                    await activity.update(using: LiveActivityPOCWidgetAttributes.ContentState(progress: 0, seconds: seconds))
-                    seconds -= 1
-                }
+                try? await Task.sleep(nanoseconds: UInt64(seconds + 1) * 1_000_000_000)
+                await activity.end(dismissalPolicy: .immediate)
             }
 
         } catch {
@@ -58,19 +54,5 @@ class ViewController: UIViewController {
     func updateLiveActivity(state: LiveActivityPOCWidgetAttributes.ContentState, activity: Activity<LiveActivityPOCWidgetAttributes>) async {
         await activity.update(using: state)
     }
-    
-    @objc func restartLiveActivity() {
-        guard let activity = activity else { return }
-        Task {
-            await activity.update(using: .seguroContratado)
-            
-            try? await Task.sleep(nanoseconds: 10_000_000_000)
-            await updateLiveActivity(state: .apoliceEmitida, activity: activity)
-            
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            await updateLiveActivity(state: .cashbackLiberado, activity: activity)
-        }
-    }
-
 }
 
