@@ -5,7 +5,7 @@ import SwiftUI
 struct LiveActivityPOCWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var picpayLogo: String = "PicPay"
-        var texts: [String]?
+        var texts: [String:String]?
         var seconds: Double = 0
     }
 
@@ -37,7 +37,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                     }
                     Spacer()
                     HStack {
-                        Text(context.state.texts?[0] ?? "")
+                        Text(context.state.texts?["subtitle"] ?? "")
                             .font(.system(size: 14))
                         Image(systemName: "shield")
                             .font(.system(size: 14))
@@ -47,7 +47,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(LinearGradient(colors: [Color(red: 0, green: 0.56, blue: 0.41), Color(red: 0.05, green: 1.61, blue: 1.19)], startPoint: .leading, endPoint: .trailing))
                             .frame(minHeight: 60)
-                        Text(context.state.texts?[1] ?? "")
+                        Text(context.state.texts?["highlight"] ?? "")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
@@ -56,7 +56,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, 1)
-                    Text(context.state.texts?[2] ?? "")
+                    Text(context.state.texts?["footer"] ?? "")
                         .font(.system(size: 16, weight: .bold))
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.bottom, 6)
@@ -95,7 +95,7 @@ struct LiveActivityPOCWidgetLiveActivity: Widget {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(LinearGradient(colors: [Color(red: 0, green: 0.56, blue: 0.41), Color(red: 0.05, green: 1.61, blue: 1.19)], startPoint: .leading, endPoint: .trailing))
                                 .frame(minHeight: 60)
-                            Text(context.state.texts?[1] ?? "")
+                            Text(context.state.texts?["highlight"] ?? "")
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)

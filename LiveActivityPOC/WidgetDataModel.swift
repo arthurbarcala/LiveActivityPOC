@@ -1,6 +1,7 @@
 struct ContentState: Codable {
-    let texts: [String]
-    let seconds: String
+    let texts: [String:String]
+    let widgetDuration: String
+    let refreshDelay: String?
 }
 
 struct WidgetData: Codable {

@@ -4,6 +4,7 @@ import ActivityKit
 class ViewController: UIViewController {
     
     var activity: Activity<LiveActivityPOCWidgetAttributes>?
+    var activityStartDate: Date?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +28,12 @@ class ViewController: UIViewController {
             let dados = await fetchApiData()
             let widget = try JSONDecoder().decode(WidgetData.self, from: dados ?? Data())
             
+            activityStartDate = Date()
             let attributes = LiveActivityPOCWidgetAttributes(name: widget.name)
             
             let initialState = LiveActivityPOCWidgetAttributes.ContentState(
                 texts: widget.contentState.texts,
-                seconds: Double(widget.contentState.seconds) ?? 0
+                seconds: Double(widget.contentState.widgetDuration) ?? 0
             )
             
             do {
@@ -47,12 +49,32 @@ class ViewController: UIViewController {
                 }
                 
                 print("Live Activity iniciada: \(activity.id)")
-                return
             }
             
             Task {
-                try? await Task.sleep(nanoseconds: ((UInt64(widget.contentState.seconds) ?? 0) + 1) * 1_000_000_000)
-                await activity?.end(dismissalPolicy: .immediate)
+                Task {
+                    try? await Task.sleep(nanoseconds: ((UInt64(widget.contentState.widgetDuration) ?? 0) + 1) * 1_000_000_000)
+                    await activity?.end(dismissalPolicy: .immediate)
+                }
+                
+                while let refreshDelay = widget.contentState.refreshDelay {
+                    try? await Task.sleep(nanoseconds: (UInt64(refreshDelay) ?? 0) * 1_000_000_000)
+                    let dados = await fetchApiData()
+                    let widget = try JSONDecoder().decode(WidgetData.self, from: dados ?? Data())
+                    
+                    let elapsed = Date().timeIntervalSince(activityStartDate ?? Date())
+                    let remaining = max(0, (Double(widget.contentState.widgetDuration) ?? 0) - elapsed)
+                    
+                    let updatedState = LiveActivityPOCWidgetAttributes.ContentState(
+                        texts: widget.contentState.texts,
+                        seconds: remaining
+                    )
+                    
+                    let attributes = LiveActivityPOCWidgetAttributes(name: widget.name)
+                    if let activity = activity {
+                        await updateLiveActivity(state: updatedState, activity: activity)
+                    }
+                }
             }
         }
         
